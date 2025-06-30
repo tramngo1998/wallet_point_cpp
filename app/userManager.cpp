@@ -179,7 +179,7 @@ User UserManager::loginUser() {
             user = userDatabase->getUser(username);
         }
         else {
-            cout << "Ma OTP khong dung! Thay doi bi huy. Vui long thu lai sau." << endl;
+            cout << "Ma OTP khong dung! Thay doi bi huy. Vui long thu lai." << endl;
             userDatabase->rejectPendingChange(username);
             return User{};
         }
@@ -206,7 +206,7 @@ void UserManager::transferFunds(const string& senderUsername) {
 
     generateOTP();
     string userOTP;
-    cout << "Xin moi nhap ma OTP de xac nhan giao dich: ";
+    cout << "Nhap ma OTP de xac nhan giao dich: ";
     cin >> userOTP;
 
     if (!verifyOTP(userOTP)) {

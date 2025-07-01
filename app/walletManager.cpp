@@ -10,6 +10,21 @@ WalletManager::WalletManager() {
 WalletManager::~WalletManager() {
 }
 
+string WalletManager::generateWalletId() {
+    auto now = chrono::system_clock::now();
+    auto timestamp = chrono::duration_cast<chrono::milliseconds>(now.time_since_epoch()).count();
+
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> dis(1000, 9999);
+    int randomNum = dis(gen);
+
+    stringstream ss;
+    ss << "ACC" << (timestamp % 1000000) << randomNum; 
+
+    return ss.str();
+}
+
 void WalletManager::createWalletDB() {
     string sql = "CREATE TABLE IF NOT EXISTS wallets ("
         "wallet_id TEXT PRIMARY KEY, "

@@ -20,6 +20,8 @@ public:
     WalletManager();
     ~WalletManager();
 
+	string generateWalletId();
+
 };
 
 #endif

@@ -54,3 +54,20 @@ void WalletManager::createWalletDB() {
     sqlite3_finalize(stmt);
 }
 
+string WalletManager::createWallet(const string& username, int initialBalance) {
+    string walletId = generateWalletId();
+    string sql = "INSERT INTO wallets (wallet_id, username, balance) VALUES (?, ?, ?);";
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+        sqlite3_bind_text(stmt, 1, walletId.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 2, username.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_int(stmt, 3, initialBalance);
+        if (sqlite3_step(stmt) == SQLITE_DONE) {
+            sqlite3_finalize(stmt);
+            return walletId;
+        }
+    }
+    cerr << "Error creating wallet: " << sqlite3_errmsg(db) << endl;
+    sqlite3_finalize(stmt);
+    return "";
+}

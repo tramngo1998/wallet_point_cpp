@@ -21,6 +21,7 @@ public:
     ~WalletManager();
 
 	string generateWalletId();
+    string createWallet(const string& username, int initialBalance);
 
 };
 

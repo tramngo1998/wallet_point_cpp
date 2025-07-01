@@ -27,7 +27,9 @@ public:
     string getWalletIdByUsername(const string& username);
 	string getUsernameByWalletId(const string& walletId);
     bool updateBalance(const string& walletId, int amount);
+    bool transferPoints(const string& senderWalletId, const string& receiverWalletId, int amount);
     bool hasSufficientFunds(const string& walletId, int amount);
+    bool deductFromMaster(int amount);
 };
 
 #endif

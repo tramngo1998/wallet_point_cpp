@@ -158,7 +158,36 @@ bool WalletManager::updateBalance(const string& walletId, int amount) {
     return false;
 }
 
+bool WalletManager::transferPoints(const string& senderWalletId, const string& receiverWalletId, int amount) {
+    if (!hasSufficientFunds(senderWalletId, amount)) {
+        cerr << "Loi: So du nguoi gui khong du!" << endl;
+        return false;
+    }
+    if (!updateBalance(senderWalletId, -amount)) {
+        cerr << "Loi: Khong the tru so du cua nguoi gui!" << endl;
+        return false;
+    }
+    if (!updateBalance(receiverWalletId, amount)) {
+        cerr << "Loi: Khong the cong so du cho nguoi nhan!" << endl;
+        updateBalance(senderWalletId, amount); 
+        return false;
+    }
+    return true;
+}
+
 bool WalletManager::hasSufficientFunds(const string& walletId, int amount) {
     int balance = getBalance(walletId);
     return balance >= amount;
 }
+
+bool WalletManager::deductFromMaster(int amount) {
+    string masterWalletId = "000000";
+    int masterBalance = getBalance(masterWalletId);
+    if (masterBalance >= amount) {
+        return updateBalance(masterWalletId, -amount);
+    }
+    cerr << "Loi: So du master khong du!" << endl;
+    return false;
+}
+
+

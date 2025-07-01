@@ -71,3 +71,94 @@ string WalletManager::createWallet(const string& username, int initialBalance) {
     sqlite3_finalize(stmt);
     return "";
 }
+
+int WalletManager::getBalance(const string& walletId) {
+    string sql = "SELECT balance FROM wallets WHERE wallet_id = ?;";
+    sqlite3_stmt* stmt;
+    int balance = -1;
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+        sqlite3_bind_text(stmt, 1, walletId.c_str(), -1, SQLITE_STATIC);
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            balance = sqlite3_column_int(stmt, 0);
+        }
+    }
+    sqlite3_finalize(stmt);
+    return balance;
+}
+
+int WalletManager::getBalanceByUsername(const string& username) {
+    string sql = "SELECT balance FROM wallets WHERE username = ?;";
+    sqlite3_stmt* stmt;
+    int balance = -1;
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+        sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_STATIC);
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            balance = sqlite3_column_int(stmt, 0);
+        }
+    }
+    sqlite3_finalize(stmt);
+    return balance;
+}
+
+string WalletManager::getWalletIdByUsername(const string& username) {
+    string sql = "SELECT wallet_id FROM wallets WHERE username = ?;";
+    sqlite3_stmt* stmt;
+    string walletId;
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+        sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_STATIC);
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            const char* idText = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+            if (idText) {
+                walletId = idText;
+            }
+        }
+    }
+    sqlite3_finalize(stmt);
+    return walletId;
+}
+
+string WalletManager::getUsernameByWalletId(const string& walletId) {
+    string sql = "SELECT username FROM wallets WHERE wallet_id = ?;";
+    sqlite3_stmt* stmt;
+    string username;
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+        sqlite3_bind_text(stmt, 1, walletId.c_str(), -1, SQLITE_STATIC);
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            const char* text = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+            if (text)
+                username = text;
+        }
+    }
+    sqlite3_finalize(stmt);
+    return username;
+}
+
+bool WalletManager::updateBalance(const string& walletId, int amount) {
+    int currentBalance = getBalance(walletId);
+    if (currentBalance == -1) {
+        cerr << "Loi: Tai khoan khong ton tai!" << endl;
+        return false;
+    }
+    if (currentBalance + amount < 0) {
+        cerr << "Loi: So du khong du!" << endl;
+        return false;
+    }
+    string sql = "UPDATE wallets SET balance = balance + ? WHERE wallet_id = ?;";
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+        sqlite3_bind_int(stmt, 1, amount);
+        sqlite3_bind_text(stmt, 2, walletId.c_str(), -1, SQLITE_STATIC);
+        if (sqlite3_step(stmt) == SQLITE_DONE) {
+            sqlite3_finalize(stmt);
+            return true;
+        }
+    }
+    cerr << "Loi khi cap nhat so du: " << sqlite3_errmsg(db) << endl;
+    sqlite3_finalize(stmt);
+    return false;
+}
+
+bool WalletManager::hasSufficientFunds(const string& walletId, int amount) {
+    int balance = getBalance(walletId);
+    return balance >= amount;
+}

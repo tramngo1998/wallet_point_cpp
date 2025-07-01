@@ -22,7 +22,12 @@ public:
 
 	string generateWalletId();
     string createWallet(const string& username, int initialBalance);
-
+    int getBalance(const string& walletId);
+    int getBalanceByUsername(const string& username);
+    string getWalletIdByUsername(const string& username);
+	string getUsernameByWalletId(const string& walletId);
+    bool updateBalance(const string& walletId, int amount);
+    bool hasSufficientFunds(const string& walletId, int amount);
 };
 
 #endif

@@ -2,6 +2,16 @@
 
 Một ứng dụng C++20 triển khai hệ thống quản lý người dùng với ví điện tử và các tính năng bảo mật dựa trên OTP. Hệ thống hỗ trợ đăng ký, đăng nhập, giao dịch ví và sao lưu cơ sở dữ liệu bằng SQLite.
 
+# Giới thiệu thành viên tham gia dự án, kèm công việc được giao.
+1. Họ và tên: Lưu Minh Khánh
+   - Nhiệm vụ: Trình quản lý cơ sở dữ liệu và bảo mật
+2. Họ và tên: Nguyễn Đình Chung
+   - Nhiệm vụ: Trình quản lý người dùng
+3. Họ và tên: Ngô Bảo Trâm
+   - Nhiệm vụ: Trình quản lý ví
+4. Họ và tên: Nguyễn Thái Bình
+   - Nhiệm vụ: Trình quản lý giao dịch
+
 ## ✨ Tính năng chính
 
 ### 👤 Quản lý người dùng

@@ -2,12 +2,14 @@
 #include <cstdlib>
 
 #define SECRET_KEY "JBSWY3DPEHPK3PXP" //Có thể ẩn đi theo yêu cầu bảo mật
+
 UserManager::UserManager() {
     userDatabase = make_unique<UserDatabase>();
     walletManager = make_unique<WalletManager>();
 	transactionManager = make_unique<TransactionManager>();
 	userDatabase->backupDatabase("data/backup/users.db");
 }
+
 UserManager::~UserManager() {
 }
 
@@ -23,8 +25,10 @@ string UserManager::generatePassword() {
     for (int i = 0; i < length; ++i) {
         password += chars[dist(generator)]; 
     }
-  return password;
+
+    return password;
 }
+
 void UserManager::generateOTP() {
     char otp[7] = { 0 };
     OTPData data;
@@ -33,6 +37,7 @@ void UserManager::generateOTP() {
     cout << "Ma OTP cua ban la: " << otp << endl;
     getCurrentTime();
 }
+
 bool UserManager::verifyOTP(const string& userOTP) {
     char otp[7] = { 0 };
     OTPData data;
@@ -42,6 +47,7 @@ bool UserManager::verifyOTP(const string& userOTP) {
     getCurrentTime();
     return (userOTP == otp);
 }
+
 void UserManager::registerUser() {
     system("cls");
     string username, password, fullName, phoneNumber;
@@ -50,7 +56,8 @@ void UserManager::registerUser() {
     cout << "\nDANG KY NGUOI DUNG" << endl;
     cout << "Nhap ten nguoi dung: ";
     cin >> username;
-if (userDatabase->userExists(username)) {
+
+    if (userDatabase->userExists(username)) {
         cout << "Loi: Ten nguoi dung da ton tai!" << endl;
         return;
     }
@@ -71,7 +78,8 @@ if (userDatabase->userExists(username)) {
         else
             break;
     } while (true);
- userDatabase->addUser(username, password, "user", fullName, phoneNumber, 0);
+
+    userDatabase->addUser(username, password, "user", fullName, phoneNumber, 0);
 
     if (!walletManager->deductFromMaster(amount)) {
         cout << "Loi: So du vi tong khong du de cap diem cho nguoi dung moi." << endl;
@@ -87,6 +95,7 @@ if (userDatabase->userExists(username)) {
         cout << "Dang ky thanh cong! Nhung co loi khi tao vi." << endl;
     }
 }
+
 void UserManager::registerUserForOthers() {
     system("cls");
     string username, password = generatePassword(), fullName, phoneNumber;
@@ -133,6 +142,7 @@ void UserManager::registerUserForOthers() {
 
     cout << "Tao tai khoan thanh cong!\nMat khau: " << password << " (Bat buoc doi sau khi dang nhap)" << endl;
 }
+
 User UserManager::loginUser() {
     string username, password;
     cout << "Nhap ten nguoi dung: ";
@@ -179,7 +189,7 @@ User UserManager::loginUser() {
             user = userDatabase->getUser(username);
         }
         else {
-            cout << "Ma OTP khong dung! Thay doi bi huy. Vui long thu lai." << endl;
+            cout << "Ma OTP khong dung! Thay doi bi huy. Vui long thu lai sau." << endl;
             userDatabase->rejectPendingChange(username);
             return User{};
         }
@@ -196,6 +206,7 @@ User UserManager::loginUser() {
 
     return user;
 }
+
 void UserManager::transferFunds(const string& senderUsername) {
     string receiverWalletId;
     int amount;
@@ -206,7 +217,7 @@ void UserManager::transferFunds(const string& senderUsername) {
 
     generateOTP();
     string userOTP;
-    cout << "Nhap ma OTP de xac nhan giao dich: ";
+    cout << "Xin moi nhap ma OTP de xac nhan giao dich: ";
     cin >> userOTP;
 
     if (!verifyOTP(userOTP)) {
@@ -236,6 +247,7 @@ void UserManager::transferFunds(const string& senderUsername) {
     cin.ignore();
     cin.get();
 }
+
 void UserManager::changePassword(const string& username) {
     string newPassword, userOTP;
 
@@ -257,6 +269,7 @@ void UserManager::changePassword(const string& username) {
         cout << "Ma OTP khong dung! Huy doi mat khau." << endl;
     }
 }
+
 bool UserManager::loadUserInfo(const string& username, User& user) {
     if (!userDatabase->userExists(username)) {
         return false;
@@ -264,6 +277,7 @@ bool UserManager::loadUserInfo(const string& username, User& user) {
     user = userDatabase->getUser(username);
     return true;
 }
+
 void UserManager::updateUserInfo(const string& currentUsername, User& currentUser) {
     string targetUsername;
     if (currentUser.role == "manager") {
